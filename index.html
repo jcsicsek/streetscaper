@@ -1,0 +1,128 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN""http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html>
+  <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+  <head>
+<!--
+Copyright 2010 Jeff Csicsek
+No re-use without author's permission
+
+index.html
+
+Streetscaper Web Application Main HTML
+
+dependencies:  streescaper.js, streetsmarts.js, google earth api
+
+-->
+    <title>Streetscaper Beta</title>
+	<!--localhost-->
+    <!--script src="http://www.google.com/jsapi?key=ABQIAAAAiJMCKiQBuhQu6QcZnfR5_BT2yXp_ZAY8_ufC3CFXhHIE1NvwkxQMtRDj39EDkFLs9Ig1C1OadAFDbA"></script-->
+	<!--dl.dropbox.com-->
+	<script src="http://www.google.com/jsapi?key=ABQIAAAAiJMCKiQBuhQu6QcZnfR5_BRWTAkRKJS7h1XjKaOTqACHuw1n0BSylk14ScvYn0Xu06AqyVxD-eJ3NA"></script>
+	<script type="text/javascript" src="js/streetscaper.js"></script>
+	<script type="text/javascript" src="js/streetsmarts.js"></script>
+    <script>
+google.load("earth", "1");
+google.load("maps", "2.xx");
+
+var ge = null;
+
+function init() {
+  google.earth.createInstance("map3d", initCallback, failureCallback);
+
+}
+
+function initCallback(instance) {
+    ge = instance;
+    ge.getWindow().setVisibility(true);
+    
+    // add a navigation control
+    ge.getNavigationControl().setVisibility(ge.VISIBILITY_AUTO);
+    
+    // add some layers
+    ge.getLayerRoot().enableLayerById(ge.LAYER_BORDERS, true);
+    ge.getLayerRoot().enableLayerById(ge.LAYER_ROADS, true);
+	ge.getLayerRoot().enableLayerById(ge.LAYER_BUILDINGS, true);
+ 
+    //document.getElementById('installed-plugin-version').innerHTML = ge.getPluginVersion().toString();
+}
+
+function failureCallback(instance) {
+}
+
+    </script>
+  </head>
+  <body onload='init()' id='body'>
+
+    <center>
+      <div>
+	  <table>
+	  <td>
+		  <img src="streetscaper_logo.gif" height="200" alt="Streetscaper Logo" /> 
+		  </td>
+		  <td>
+		  <font size="5"><b>Project Location</b></font><br/>
+		  On Street:  <input id="onStreet" type="text" value="Ave A"/><br/>
+		  From Street:  <input id="fromStreet" type="text" value="E 1st St"/><br/>
+		  To Street:  <input id="toStreet" type="text" value="E 3rd St"/><br/>
+		  Borough:  <input id="borough" type="text" value="Manhattan"/><br/>		  
+		  <input type="button" onclick="buttonClick()" value="Set Project Area"/>
+		  <!--input type="button" onclick="toggleOverlay()" value="Toggle Overlay"/-->
+
+		  <br/>
+		  Street Width (building-to-building)
+		  <br/>
+		  		  <input type="button" onclick="decreaseWidth()" value=" - "/>
+		  <input id="widthElement" type="text" size="5" value="80" onchange="createGroundOverlay()"/>
+		  <input type="button" onclick="increaseWidth()" value=" + "/>
+		  
+
+		  </td>
+		  </table>
+	<h3 id="locationDisplay">Welcome to Streetscaper!  Set a project area to get started.</h3>
+	</div> 
+      </div>
+	  <div id='control_panel'>
+	  			<form name="bikeLaneRadios">
+		<table border='1' cellpadding='5'>
+		<tr>
+			<td><b>Bicycles</b></td>
+			<td><b>Transit</b></td>
+			<td><b>Parking</b></td>
+			<td><b>Turn Lanes</b></td>
+			<td><b>Sidewalks</b></td>
+		</tr>
+		<tr>
+		<td>
+
+			<input type="checkbox" name="bikeLaneExists" onclick="bikeLaneChanged()">     Bike Lane<br/>
+
+			<input type="radio" name="bikeLaneSide" value="left" onclick="bikeLaneChanged()" checked> Left Side<br/>
+			<input type="radio" name="bikeLaneSide" value="right" onclick="bikeLaneChanged()"> Right Side<br/>
+
+			Buffer Width (feet)  <input id="bikeBufferWidth" type="text" size="5" value="0" onchange="bikeLaneChanged()"/>
+		</td>
+		<td>
+			<input type="checkbox" name="busLaneExists" onclick="busLaneChanged()">     Bus Lane
+		</td>
+		<td>
+			<input type="checkbox" name="leftParkingExists" onclick="refreshLanes()"> Left-Hand Curb<br/>
+			<input type="checkbox" name="rightParkingExists" onclick="refreshLanes()"> Right-Hand Curb
+		</td>
+		<td>
+			<input type="checkbox" name="leftTurnExists" onclick="turnLaneChanged()"> Left Turn Lane<br/>
+			<input type="checkbox" name="rightTurnExists" onclick="turnLaneChanged()"> Right Turn Lane
+		</td>
+		<td>
+			Left Width (feet)  <input id="rightSidewalkWidth" type="text" size="5" value="10" onchange="refreshLanes()"/> <br/>
+			Right Width (feet)  <input id="leftSidewalkWidth" type="text" size="5" value="10" onchange="refreshLanes()"/>
+		</td>
+	</tr>
+	</table>
+				</form>
+	<br/>
+	</div>
+      <div id='map3d' style='border: 1px solid silver; height: 600px; width: 800px;'></div>
+
+    </center>
+
+  </body>
+</html>
